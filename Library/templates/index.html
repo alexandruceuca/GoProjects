@@ -9,12 +9,51 @@
 </head>
 
 <body>
-    <p> Hello {{.Name}}</p>
-    {{if .DBStatus}}
-    <p> The database connection is alive!</p>
-    {{else}}
-    <p> The database connection is down!</p>
-    {{end}}
+
+    <form id="serch-form" onsubmit="return false">
+        <input name="search" />
+        <input type="submit" value="search" onclick="sumbitSearch()" />
+    </form>
+
+    <table width="100%">
+        <thead>
+            <tr style="text-align: left;">
+                <th wight="40%">Title</th>
+                <th wight="30%">Author</th>
+                <th wight="10%">Year</th>
+                <th wight="40%">ID</th>
+            </tr>
+        </thead>
+        <tbody id="search-results"></tbody>
+
+
+    </table>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript">
+        function sumbitSearch() {
+            $a.ajax({
+                url: "/search",//submit back a request to our server
+                method: "POST",
+                data: $("#search-form").serialize(),//submit our search data
+                succes: function (rawData) {
+                    var parsed = JSON.parse(rawData);
+                    if (!parsed) return;
+
+                    var searchResults = $("#search-results");
+                    searchResults.empty();
+
+                    parsed.forEach(function (result) {
+                        var row = $("<tr><td>" + result.Title + "</td><td>" + result.Author + "</td><td>" + result.Year + "</td><td>" + result.ID + "</td></tr>");
+                        searchResults.append(row);
+                    });
+                }
+            });
+            return false;//to prevent the default button action from being taken
+        }
+
+
+    </script>
 </body>
 
 </html>
